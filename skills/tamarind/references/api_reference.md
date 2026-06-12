@@ -1,6 +1,6 @@
 # Tamarind Bio REST API reference
 
-**Spec:** the OpenAPI spec at `https://app.tamarind.bio/openapi.yaml` (3.0, auth `ApiKeyAuth`) covers the 8 **core job endpoints** (`/submit-job`, `/submit-batch`, `/jobs`, `/result`, `/upload/{filename}`, `/files`, `/delete-job`, `/delete-file`) — fetch it for those exact shapes. It does **not** include the discovery/management endpoints (`/tools`, `/usage-statistics`, `/finetuned-models`, `/models`, `/submit-pipeline`, `/run-pipeline`, `/stop-job`, `/deploy-model`) — for those, use this file + the live MCP `getAvailableTools`/`getJobSchema`/`getJobs`. This file also adds the behaviors no spec spells out (response-shape-by-query, two-step result download, batch aggregation polling, REST-vs-MCP field differences).
+**Spec:** the OpenAPI spec at `https://app.tamarind.bio/openapi.yaml` (3.0, auth `ApiKeyAuth`) covers the 8 **core job endpoints** (`/submit-job`, `/submit-batch`, `/jobs`, `/result`, `/upload/{filename}`, `/files`, `/delete-job`, `/delete-file`) — fetch it for those exact shapes. It does **not** include the discovery/management endpoints (`/tools`, `/usage-statistics`, `/submit-pipeline`, `/run-pipeline`, `/stop-job`) — for those, use this file + the live MCP `getAvailableTools`/`getJobSchema`/`getJobs`. This file also adds the behaviors no spec spells out (response-shape-by-query, two-step result download, batch aggregation polling, REST-vs-MCP field differences).
 
 Base URL: `https://app.tamarind.bio/api/`
 Authentication: `x-api-key: <YOUR_KEY>` header on every request.
@@ -12,8 +12,8 @@ There is no official Python SDK. Call the API with `requests` (Python) or `curl`
 
 | Method | Path | Purpose |
 |---|---|---|
-| GET | `/tools` | List available tools and their inline parameter schemas. Returns the **full list** (no server-side filtering — filter client-side). `?custom=true` for custom tools. |
-| POST | `/submit-job` | Submit one job. Body: `jobName`, `type`, `settings` (+ optional `projectTag`, `modelName` for finetuned inference). |
+| GET | `/tools` | List available tools and their inline parameter schemas. Returns the **full list** (no server-side filtering — filter client-side). |
+| POST | `/submit-job` | Submit one job. Body: `jobName`, `type`, `settings` (+ optional `projectTag`). |
 | POST | `/submit-batch` | Submit many jobs of the same tool. See payload shapes below. |
 | GET | `/jobs` | List/inspect jobs. Query: `jobName`, `batch`, `limit`, `startKey`, `organization`, `includeSubjobs`, `jobEmail`. |
 | POST | `/result` | Get a presigned download URL for job results (two-step — see below). Body: `jobName` (+ optional `fileName`, `pdbsOnly`, `jobEmail`). |
@@ -24,9 +24,6 @@ There is no official Python SDK. Call the API with `requests` (Python) or `curl`
 | GET | `/delete-file` | Remove a file/folder. Query: `filePath` or `folder`. |
 | POST | `/submit-pipeline` | Run a multi-step pipeline defined inline via `stages[]`. |
 | POST | `/run-pipeline` | Run a pipeline saved in the UI. Body: `pipelineName`, `initialInputs`/`inputs`. |
-| GET | `/finetuned-models` | List your finetuned models. `?type=<finetune-type>` to filter. |
-| POST | `/deploy-model` | Deploy a custom container model. Body: `modelName`, `dockerImage`, `inputSchema`, `outputSchema`. |
-| GET | `/models` | List deployed custom models. `?name=<model>` for one. |
 | GET | `/usage-statistics` | Usage/billing. Query: `statistic` (`weighted_hours`/`jobs`), `scope` (`user`/org). |
 
 ## Request shapes

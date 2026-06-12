@@ -13,7 +13,7 @@ docking = [t for t in tools if "diffdock" in t["name"].lower()]
 
 Each REST tool entry carries: `name` (the `type` you submit), `displayName`, `description`, `github`, `paper`, and `settings` (the inline parameter schema). REST entries do **not** include `categories`/`tags`.
 
-**MCP** `getAvailableTools(search=..., category=..., tag=..., custom=...)` filters server-side and returns entries with `categories` and `tags`. Set `custom=true` to list only your account's custom tools.
+**MCP** `getAvailableTools(search=..., category=..., tag=...)` filters server-side and returns entries with `categories` and `tags`.
 
 ## Categories
 
@@ -26,11 +26,10 @@ Each REST tool entry carries: `name` (the `type` you submit), `displayName`, `de
 | `peptide` | Peptide design and structure |
 | `nucleic-acid` | DNA/RNA design, RNA language models |
 | `cryoem` | Cryo-EM density-guided modeling |
-| `finetuning` | Finetuning workflows for supported models |
 
 ## Common tags
 
-`structure-prediction`, `protein-design`, `binder-design`, `antibody-design`, `protein-ligand-docking`, `protein-protein-docking`, `binding-affinity`, `inverse-folding`, `developability`, `humanization`, `immunogenicity`, `molecular-dynamics`, `protein-language-models`, `rna-language-models`, `small-molecule-property-prediction`, `generate-small-mols`, `mutation-scoring`, `solubility`, `aggregation`, `utilities`, `experimental-data`, `finetuning`.
+`structure-prediction`, `protein-design`, `binder-design`, `antibody-design`, `protein-ligand-docking`, `protein-protein-docking`, `binding-affinity`, `inverse-folding`, `developability`, `humanization`, `immunogenicity`, `molecular-dynamics`, `protein-language-models`, `rna-language-models`, `small-molecule-property-prediction`, `generate-small-mols`, `mutation-scoring`, `solubility`, `aggregation`, `utilities`, `experimental-data`.
 
 ## Representative tool families
 

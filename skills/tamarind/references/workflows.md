@@ -186,24 +186,7 @@ logs = getJobLogs("binder-screen-cand-2")   # MCP: last N lines of output log
 A `Stopped` status with no `Score` usually means a failure — read the log tail.
 A `403` at submit means a budget cap was hit (see weighted hours, below).
 
-## 8. Run inference on a finetuned model
-
-List your finetuned models, then submit using the model's `inferenceType` as the
-job `type` plus a `modelName` in `settings`.
-
-```python
-models = requests.get(f"{BASE}/finetuned-models", headers=HEADERS).json()
-# {"personalModels": [{"name", "type", "inferenceType", "baseModel", "status"}, ...]}
-m = models["personalModels"][0]
-
-requests.post(f"{BASE}/submit-job", headers=HEADERS, json={
-    "jobName": "ft-inference-1",
-    "type": m["inferenceType"],          # e.g. "boltz-affinity-inference"
-    "settings": {"sequence": "...", "modelName": m["name"]},
-}).raise_for_status()
-```
-
-## 9. Check usage / weighted hours spent
+## 8. Check usage / weighted hours spent
 
 ```python
 usage = requests.get(f"{BASE}/usage-statistics", headers=HEADERS,
@@ -211,7 +194,7 @@ usage = requests.get(f"{BASE}/usage-statistics", headers=HEADERS,
 # {"users": [{"email": ..., "total": <weighted_hrs>, "tools": {<tool>: <hrs>}}]}
 ```
 
-## 10. List every job (paginate past the 1000 limit)
+## 9. List every job (paginate past the 1000 limit)
 
 The list query returns `{"jobs": [...], "startKey": ...}`; pass `startKey` back
 until it's absent.
@@ -227,7 +210,7 @@ while True:
 print(len(jobs))
 ```
 
-## 11. Submit now, check back later (non-blocking)
+## 10. Submit now, check back later (non-blocking)
 
 Bio jobs run for minutes to hours — you don't have to hold a blocking poll loop
 open. Jobs are addressable by `jobName` from any process, so submit, **persist the

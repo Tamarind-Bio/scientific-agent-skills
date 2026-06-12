@@ -146,7 +146,7 @@ boltz = [t for t in tools if "boltz" in t["name"].lower()]
 
 Note: the **MCP** `getAvailableTools` can list the same tool name more than once (per-region/variant rows); the **REST** `/tools` list is deduplicated. Either way, match by `name` and take the first (`next(t for t in tools if t["name"] == "alphafold")`) rather than assuming a single row.
 
-**MCP** `getAvailableTools(search=..., category=..., tag=...)` filters server-side and adds `categories`/`tags` per tool. Categories: `protein`, `antibody`, `enzyme`, `small-molecule`, `peptide`, `nucleic-acid`, `cryoem`, `finetuning`. Common tags: `structure-prediction`, `protein-design`, `binder-design`, `antibody-design`, `protein-ligand-docking`, `binding-affinity`, `inverse-folding`, `developability`, `molecular-dynamics`, `protein-language-models`.
+**MCP** `getAvailableTools(search=..., category=..., tag=...)` filters server-side and adds `categories`/`tags` per tool. Categories: `protein`, `antibody`, `enzyme`, `small-molecule`, `peptide`, `nucleic-acid`, `cryoem`. Common tags: `structure-prediction`, `protein-design`, `binder-design`, `antibody-design`, `protein-ligand-docking`, `binding-affinity`, `inverse-folding`, `developability`, `molecular-dynamics`, `protein-language-models`.
 
 A representative set of widely-used tools (verify with `/tools`): `alphafold`, `boltz` (Boltz-2), `chai` (Chai-1), `esmfold` / `esmfold2`, `rfdiffusion`, `proteinmpnn`, `ligandmpnn`, `boltzgen`, `bindcraft`, `diffdock`. See `references/tool_catalog.md` for the full category/tag map and how to read tool metadata.
 
@@ -201,11 +201,6 @@ submitBatch(batchName="verify-designs", type="alphafold", fromJob="my-proteinmpn
 For a **file** input (e.g. a tool that takes a `.pdb`/`.cif`), reference a prior job's output by the path form `JobName/path/to/file.ext` in that file parameter. Two cautions, both confirmed by validation: (1) match the parameter's required **file type** — e.g. AlphaFold's `templateFiles` accepts only `.cif` and is a list, and is gated behind `templateMode: "custom"`; (2) `templateFiles` is for *structural templates*, not for "fold this designed sequence" — to fold a sequence, pass `sequence`. Always `getJobSchema`/`validateJob` to confirm a file param's type/conditions before chaining into it.
 
 To discover a job's exact output paths, use MCP `listJobFiles(job1)` — it returns each file's `s3Path`, usable directly in the next `submitJob`. (The REST `GET /files` lists your account's *uploaded* files as a flat name list; it does not enumerate a job's outputs.) Tamarind also supports saved **pipelines**: build one in the UI, then drive it with `/run-pipeline` (`{pipelineName, initialInputs, inputs}`) or define `stages[]` inline via `/submit-pipeline` (each stage names a `task` + `toolSettings`, using `"pdbFile": "pipe"` to thread one stage's output into the next). See `references/workflows.md`.
-
-## Finetuned and custom models
-
-- **Finetuned models:** `GET /finetuned-models` lists your finetuned models — `{personalModels: [{name, type, inferenceType, baseModel, status}]}`. To run inference on one, submit its `inferenceType` as the job `type` and add `"modelName": "<name>"` to `settings`. Filter with `?type=plm-finetune` (etc.).
-- **Custom models:** `POST /deploy-model` deploys your own container (`{modelName, dockerImage, inputSchema, outputSchema}`); `GET /models` lists deployed custom models. Custom tools also appear in `getAvailableTools(custom=true)`.
 
 ## Batch submission
 
@@ -289,4 +284,4 @@ The `openapi.yaml` spec is the source of truth for endpoint shapes; these files 
 - `references/examples.md` — **validated** `settings` payloads per common tool (alphafold/boltz/diffdock/proteinmpnn/batch), a copy-paste self-check, the "what fails and the exact error" list, and output-shape notes. Start here for a working payload.
 - `references/api_reference.md` — endpoint quick-reference + the non-obvious shapes: `/jobs` by-name returns a bare row (not `{jobs:[...]}`), `/result` is a two-step download, batch parents poll on `batchStatus`, `/files` is a flat name list, the `settings` field-handling rules.
 - `references/tool_catalog.md` — category/tag map, how to read tool + parameter metadata, common tool families.
-- `references/workflows.md` — end-to-end recipes: fold a sequence, validate-before-submit, upload + reference a file, design→fold chaining, batch screen with aggregation polling, finetuned-model inference, usage stats, pagination, and the non-blocking submit-now/check-later pattern for long jobs.
+- `references/workflows.md` — end-to-end recipes: fold a sequence, validate-before-submit, upload + reference a file, design→fold chaining, batch screen with aggregation polling, usage stats, pagination, and the non-blocking submit-now/check-later pattern for long jobs.
