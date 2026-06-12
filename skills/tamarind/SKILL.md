@@ -1,12 +1,12 @@
 ---
 name: tamarind
-description: Run protein and small-molecule modeling jobs on the Tamarind Bio platform via its REST API or MCP server. Use when the user mentions Tamarind, tamarind.bio, or wants to run structure prediction (AlphaFold, Boltz, Chai, ESMFold), protein/binder design (RFdiffusion, ProteinMPNN, BoltzGen), antibody design and developability, protein-ligand docking (DiffDock), binding-affinity prediction, MSA generation, or molecular dynamics in the cloud without local GPUs. Also trigger when code references app.tamarind.bio/api or the x-api-key header for Tamarind, or when a workflow needs to submit batches of sequences for structural or biophysical characterization.
+description: Access a collection of open-source molecular design and structural biology tools on the Tamarind Bio platform, via its REST API or MCP server — no local GPUs required. Tamarind bundles popular open-source models for structure prediction (AlphaFold, Boltz, Chai, ESMFold), protein, binder, and de novo design (RFdiffusion, ProteinMPNN, BoltzGen), antibody and nanobody design and developability, protein-ligand docking (DiffDock), binding-affinity prediction, MSA generation, and molecular dynamics. Use when the user mentions Tamarind or tamarind.bio, wants to run any of these open-source tools in the cloud, references app.tamarind.bio/api or the x-api-key header, or needs to submit batches of sequences for structural or biophysical characterization.
 license: MIT
 compatibility: Requires Python 3.10+, a Tamarind Bio account, and an API key from app.tamarind.bio. Uses the `requests` library against the public REST API (no dedicated Python SDK exists). Network access required. Optional MCP server at mcp.tamarind.bio/mcp for agent hosts.
 metadata:
   version: "1.0"
   skill-author: Tamarind Bio
-  trigger-keywords: "protein structure prediction, AlphaFold, Boltz, Chai, ESMFold, protein design, binder design, antibody design, nanobody, protein-ligand docking, DiffDock, binding affinity, MSA generation, inverse folding, ProteinMPNN, RFdiffusion, BoltzGen, cloud GPU biology, structure prediction API, x-api-key"
+  trigger-keywords: "protein structure prediction, AlphaFold, Boltz, Chai, ESMFold, protein design, binder design, de novo design, antibody design, nanobody, protein-ligand docking, DiffDock, binding affinity, MSA generation, inverse folding, ProteinMPNN, RFdiffusion, BoltzGen, cloud GPU biology, structure prediction API, x-api-key"
 ---
 
 # Tamarind Bio
@@ -46,6 +46,8 @@ This skill is the right fit when the work should run on Tamarind's managed cloud
 1. Sign in at [app.tamarind.bio](https://app.tamarind.bio) and create an API key from the account/API settings.
 2. Authenticate every REST request with the `x-api-key` header.
 3. **Never hardcode the key.** Read it from the `TAMARIND_API_KEY` environment variable or a `.env` file (use `python-dotenv`). Never commit keys to source control.
+
+**Pricing:** Every user gets **10 free jobs**. For larger usage, contact [info@tamarind.bio](mailto:info@tamarind.bio) to purchase a subscription.
 
 ```bash
 export TAMARIND_API_KEY="your_api_key"
@@ -152,8 +154,8 @@ A representative set of widely-used tools (verify with `/tools`): `alphafold`, `
 
 The catalog has many tools per task; **don't hardcode a favorite — filter by `tag`, then read each candidate's `description` and match it to the user's actual goal** (input you have, output you need, constraints like speed or "no MSA"). The `description` and `tags` fields are the public "what it's for" signal; let them, plus `validateJob`, drive the pick. Quick orientation by task:
 
-- **Fold a single protein / complex** (`tag=structure-prediction`): `alphafold` is the accurate default for monomers + multimers (join chains with `:`); `esmfold` is single-sequence (no MSA) and fast — reach for it when you want speed and have no MSA; `esmfold2` is newer and conditions on an MSA by default (with a faster single-sequence `esmfold2-fast` variant); `boltz`/`chai`/`openfold`/`protenix`/`intfold` are AlphaFold3-class for **protein + nucleic-acid + small-molecule complexes** (use these when a ligand/RNA/DNA is part of the system, not just protein — and `boltz` adds binding-affinity). Specialized folders exist for antibodies (`abodybuilder`, `immunebuilder`), cyclic peptides (`highfold`), and conformational ensembles (`afcluster`, `alphaflow`) — filter and read descriptions.
-- **Design a binder** (`tag=binder-design`): `rfdiffusion` (backbone generation, de novo binders, motif scaffolding), `bindcraft` (de novo miniprotein binders), `boltzgen` (binders for protein **and** small-molecule targets, incl. nanobodies/antibodies/peptides). Antibody-specific generators live under `tag=antibody-design`.
+- **Fold a single protein / complex** (`tag=structure-prediction`): the AlphaFold3-class reproductions — `boltz`/`chai`/`openfold`/`protenix`/`intfold` — are the accurate default for **everything**, including protein-only systems; they also handle **nucleic-acid + small-molecule complexes**, so reach for them whenever a ligand/RNA/DNA is part of the system (and `boltz` adds binding-affinity). `alphafold` (AF2) remains a solid choice for monomers + multimers (join chains with `:`). `esmfold` is single-sequence (no MSA) and fast — reach for it when you want speed and have no MSA; `esmfold2` is newer and conditions on an MSA by default (with a faster single-sequence `esmfold2-fast` variant). Specialized folders exist for antibodies (`abodybuilder`, `immunebuilder`), cyclic peptides (`highfold`), and conformational ensembles (`afcluster`, `alphaflow`) — filter and read descriptions.
+- **Design a binder** (`tag=binder-design`): for **de novo** binders use `bindcraft` (de novo miniprotein binders) or `boltzgen` (binders for protein **and** small-molecule targets, incl. nanobodies/antibodies/peptides); use `rfdiffusion` for **motif scaffolding** (not de novo design). Antibody-specific generators live under `tag=antibody-design`.
 - **Design sequence for a known backbone** (`tag=inverse-folding`): `proteinmpnn` (general), `ligandmpnn` (ligand-aware), plus thermostable/soluble/antibody MPNN variants. Inverse folding takes a **structure** and emits **sequences** — fold them back to verify (see chaining).
 - **Dock a small molecule** (`tag=protein-ligand-docking`): `diffdock` (blind docking, no known pocket); `boltz`/`chai` co-fold the ligand into the complex when you'd rather predict the bound structure than dock into a fixed receptor.
 - **Predict binding affinity** (`tag=binding-affinity`) or **generate an MSA** (search `msa`) — filter and read.

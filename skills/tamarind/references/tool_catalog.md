@@ -43,7 +43,7 @@ Verify exact names and availability with `/tools` — these are common anchors, 
 - `esmfold` / `esmfold2` — fast single-sequence folding.
 
 **Protein / binder design**
-- `rfdiffusion` — backbone generation / binder design.
+- `rfdiffusion` — motif scaffolding.
 - `boltzgen` — generative design.
 - `bindcraft` — binder design.
 - `proteinmpnn` / `ligandmpnn` — inverse folding (sequence given backbone; ligand-aware variant).
